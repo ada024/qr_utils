@@ -25,6 +25,8 @@ class _MyAppState extends State<MyApp> {
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
+  Timer cameraTimer;
+
   @override
   void initState() {
     super.initState();
@@ -122,9 +124,26 @@ class _MyAppState extends State<MyApp> {
   void _scanQR() async {
     String result;
     try {
+      cameraTimer =  Timer(Duration(seconds: 5), cancel);
       result = await QrUtils.scanQR;
     } on PlatformException {
       result = 'Process Failed!';
+    }
+    cameraTimer?.cancel();
+    setState(() {
+      _content = result;
+    });
+  }
+
+
+  void cancel() async {
+    String result;
+    try {
+      result = await QrUtils.cancel;
+    } on PlatformException {
+      result = 'Cancel Failed!';
+    } catch(e){
+      print("Ignoring camera-timeout");
     }
 
     setState(() {
