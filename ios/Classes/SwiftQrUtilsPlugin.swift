@@ -53,6 +53,11 @@ fileprivate var qrcodeImage: CIImage!
                 //print("captureImage")
     
             }
+    
+    else if (call.method == "cancel") {
+                print("Canceled")
+                   self.cancel()
+               }
 
 
   }
@@ -120,6 +125,15 @@ extension SwiftQrUtilsPlugin {
     
     }
     
+     
+    func cancel(){
+        self.result!("Canceled")
+                    qrCodeFrameView?.frame = CGRect.zero
+                    videoPreviewLayer?.removeFromSuperlayer()
+                    captureSession = AVCaptureSession()
+                    self.captureSession.stopRunning()
+    }
+    
     
     func generateQR(text:String){
         if qrcodeImage == nil {
@@ -171,8 +185,8 @@ extension SwiftQrUtilsPlugin: AVCaptureMetadataOutputObjectsDelegate {
         let metadataObj = metadataObjects[0] as! AVMetadataMachineReadableCodeObject
         
         if supportedCodeTypes.contains(metadataObj.type) {
-            print(metadataObj.stringValue!)
             if metadataObj.stringValue != nil {
+                  print(metadataObj.stringValue!)
                // launchApp(decodedURL: metadataObj.stringValue!)
                 self.result!(metadataObj.stringValue!)
                 qrCodeFrameView?.frame = CGRect.zero

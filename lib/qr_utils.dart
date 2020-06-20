@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:io' show Platform;
 
 class QrUtils {
   static const MethodChannel _channel =
@@ -12,6 +13,14 @@ class QrUtils {
   static Future<String> get scanQR async {
     final String qrContent = await _channel.invokeMethod('scanQR');
     return qrContent;
+  }
+
+  // Returns Future<String> after canceled current scan
+  static Future<String> get cancel async {
+    if (Platform.isIOS) {
+    final String res = await _channel.invokeMethod('cancel');
+    return res;
+    } throw Exception('Cancel not implemented for Android');
   }
 
   // Returns Future<Image> after generating QR Image
